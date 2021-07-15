@@ -39,4 +39,6 @@ urlpatterns = [
     path('redoc', schema_view.with_ui('redoc', cache_timeout=0),
          name='schema-redoc'),
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
+    path('account/',
+         include('social_authen.account.urls', namespace='account')),
 ]

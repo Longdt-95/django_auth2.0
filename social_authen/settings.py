@@ -26,6 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,7 +41,8 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'social_django',
     'drf_social_oauth2',
-    'social_authen.account'
+    'social_authen.account',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'social_authen.urls'
@@ -103,6 +106,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope',
+               'groups': 'Access to your groups'}
+}
+
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -117,6 +126,28 @@ REST_FRAMEWORK = {
         # django-oauth-toolkit >= 1.0.0
         'drf_social_oauth2.authentication.SocialAuthentication',
     ),
+}
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Your App API - Swagger': {
+            'type': 'oauth2',
+            'authorizationUrl': '/yourapp/o/authorize',
+            'tokenUrl': '/yourapp/o/token/',
+            'flow': 'accessCode',
+            'scopes': {
+                'read groups': 'read groups',
+            }
+        }
+    },
+    'OAUTH2_REDIRECT_URL': 'http://localhost/static/drf-yasg/swagger-ui-dist/oauth2-redirect.html',
+    'OAUTH2_CONFIG': {
+        'clientId': 'yourAppClientId',
+        'clientSecret': 'yourAppClientSecret',
+        'appName': 'your application name'
+
+    },
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -136,8 +167,8 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Facebook configuration
-SOCIAL_AUTH_FACEBOOK_KEY = '4198783513516653'
-SOCIAL_AUTH_FACEBOOK_SECRET = 'be0c99f3e49de4e76ebd72f891fce55c'
+SOCIAL_AUTH_FACEBOOK_KEY = '517036639571216'
+SOCIAL_AUTH_FACEBOOK_SECRET = '83792d9f70306f691ce76c426b88a9b3'
 
 # Define SOCIAL_AUTH_FACEBOOK_SCOPE to get extra permissions from Facebook.
 # Email is not sent by default, to get it, you must request the email permission.
@@ -157,7 +188,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
